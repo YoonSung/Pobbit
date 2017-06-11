@@ -1,10 +1,10 @@
 package config;
 
+import org.apache.http.client.HttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.client.RestTemplate;
 
 import client.datagov.OpenDataClient;
 
@@ -14,9 +14,9 @@ import client.datagov.OpenDataClient;
 public class ClientConfig {
 	
 	@Bean
-	public OpenDataClient openDataClient(RestTemplate restTemplate) {
+	public OpenDataClient openDataClient(HttpClient httpClient) {
 		String host = "http://apis.data.go";
 		String serviceKey = "ih4O4s3bQH9kRS7o%2FIE0wyJsBkdTgLQztXKid%2B720cGszLwYhvaz2DvrXAK4WzhOjKcpWvc3IoXZbk2CWEYJIA%3D%3D";
-		return new OpenDataClient(restTemplate, serviceKey, host);
+		return new OpenDataClient(httpClient, serviceKey, host);
 	}
 }

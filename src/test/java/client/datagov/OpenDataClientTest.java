@@ -12,7 +12,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
 
 public class OpenDataClientTest {
 
@@ -23,7 +22,7 @@ public class OpenDataClientTest {
 	
 	@Test
 	public void test() {
-		dut = new OpenDataClient(new RestTemplate(), serviceKey, host);
+		dut = new OpenDataClient(HttpClientBuilder.create().build(), serviceKey, host);
 		
 		dut.getAllPolitician();
 	}
