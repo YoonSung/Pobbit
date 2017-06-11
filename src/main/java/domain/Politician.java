@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,6 +17,17 @@ public class Politician {
 	private Long id;
 
 	private String name;
-
-	private int count;
+	
+	private List<Integer> numberOfElection;
+	
+	private String district;
+	
+	private String imageUrl;
+	
+	//TODO enum
+	private String partyName;
+	
+	private String committeeName;
+	
+	private String description;
 }
