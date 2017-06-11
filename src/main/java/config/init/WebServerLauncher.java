@@ -1,4 +1,4 @@
-package init;
+package config.init;
 
 import java.io.File;
 

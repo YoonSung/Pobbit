@@ -1,4 +1,4 @@
-package init;
+package config.init;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
