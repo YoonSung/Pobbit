@@ -1,5 +1,8 @@
 package client.datagov;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 
 import org.jsoup.Jsoup;
@@ -23,10 +26,15 @@ public class OpenDataClient {
 	}
 
 	private BasicInfoIndex _getAllPolitician(int page, int size) {
-		String url = String.format(host + "/9710000/NationalAssemblyInfoService/getMemberCurrStateList?numOfRows=%d&pageNo=%d&ServiceKey=%s", size, page, serviceKey);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+		Map<String, String> urlVariables = new HashMap<>();
+		urlVariables.put("numOfRows", "" + size);
+		urlVariables.put("pageNo", "" + page);
+		urlVariables.put("ServiceKey", serviceKey);
+				
+		String url = host + "/9710000/NationalAssemblyInfoService/getMemberCurrStateList";
+		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, String.class, urlVariables);
 		
-		if ( responseEntity.getStatusCode() == HttpStatus.OK) {
+		if (responseEntity.getStatusCode() == HttpStatus.OK) {
 			Element element = Jsoup.parse(responseEntity.getBody()).body(); 
 		}
 		

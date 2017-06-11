@@ -35,9 +35,27 @@ public class DbConfig {
 	@Value("${database.password}")
 	private String password;
 	
-	@Value("${hibernate}")
-	private Properties jpaProperties;
+	@Value("${hibernate.hbm2ddl.auto}")
+	private String hbm2ddl;
+
+	@Value("${hibernate.format_sql}")
+	private String formatSql;
 	
+	@Value("${hibernate.ejb.naming_strategy}")
+	private String namingStrategy;
+	
+	@Value("${hibernate.show_sql}")
+	private String showSql;
+
+	public Properties getJpaProperties() {
+		Properties properties = new Properties();
+		properties.put("hibernate.hbm2ddl.auto", hbm2ddl);
+		properties.put("hibernate.format_sql", formatSql);
+		properties.put("hibernate.ejb.naming_strategy", namingStrategy);
+		properties.put("hibernate.show_sql", showSql);
+		return properties;
+	}
+
 	public DataSource dataSource() {
 		HikariDataSource dataSource = new HikariDataSource();
 		dataSource.setDriverClassName(driverClassName);
@@ -56,7 +74,7 @@ public class DbConfig {
 		entityManagerFactoryBean.setPackagesToScan("domain");
 		entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
 
-		entityManagerFactoryBean.setJpaProperties(jpaProperties);
+		entityManagerFactoryBean.setJpaProperties(getJpaProperties());
 		return entityManagerFactoryBean;
 	}
 
