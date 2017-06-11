@@ -45,4 +45,10 @@ public class OpenDataClientTest {
 			System.out.println(e.toString());
 		});
 	}
+	
+	@Test
+	public void test3() throws IOException {
+		Element element = Jsoup.connect("http://watch.peoplepower21.org/?mid=Member&member_seq=892").header("Accept-encoding", "").get().body();
+		System.out.println(element.toString());
+	}
 }
