@@ -29,8 +29,8 @@ public abstract class OpenDataClient extends CommonHttpClient {
 	protected abstract List<BasicInfoIndex> getAllPolitician(int page, int size);
 
 	protected List<BasicInfoIndex> toBasicInfoIndexList(Document document) {
-		return getFirstElement(document, "body")
-				.flatMap(e -> getFirstElement(e, "items"))
+		return firstElementByTagName(document, "body")
+				.flatMap(e -> firstElementByTagName(e, "items"))
 				.map(e -> e.getElementsByTag("item"))
 				.filter(e -> !e.isEmpty())
 				.map(es -> es.stream().map(BasicInfoIndex::new).collect(Collectors.toList()))
