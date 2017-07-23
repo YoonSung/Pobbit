@@ -20,7 +20,7 @@ public class LocalOpenCongressClientTest {
 		LocalOpenCongressClient dut = new LocalOpenCongressClient(HttpClientBuilder.create().build());
 		final Map<Integer, OpenCongressPoliticianPage> map = dut.getAllPoliticianPage();
 		map.forEach((integer, openCongressPoliticianPage) -> {
-			
+			System.out.println(openCongressPoliticianPage.toString());
 		});
 	}
 }

@@ -2,6 +2,9 @@ package domain.generic;
 
 import java.math.BigDecimal;
 
+import lombok.ToString;
+
+@ToString
 public class Percent {
 	private BigDecimal value;
 	
@@ -22,6 +25,10 @@ public class Percent {
 
 	public static Percent of(BigDecimal value, int scale) {
 		return new Percent(value, scale);
+	}
+	
+	public static Percent of(double value) {
+		return of(BigDecimal.valueOf(value));
 	}
 
 	private int intValue() {

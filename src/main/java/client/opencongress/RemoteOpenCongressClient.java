@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -12,6 +11,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.jsoup.nodes.Document;
 
+import support.HangeulUtils;
 import support.JsoupUtils;
 
 public class RemoteOpenCongressClient extends OpenCongressClient {
@@ -46,17 +46,11 @@ public class RemoteOpenCongressClient extends OpenCongressClient {
 								JsoupUtils.firstElementByTagName(element, "h4").ifPresent(h4Element -> {
 									String link = element.attr("href");
 									String h4Text = h4Element.text();
-									Matcher matcher = KOREAN_PATTERN.matcher(h4Text);
-									if (StringUtils.isNoneBlank(link) && StringUtils.startsWith(link, LINK_PREFIX) && matcher.find()) {
-										String number = StringUtils.trim(StringUtils.substring(link, LINK_PREFIX.length()));
-										if (NumberUtils.isNumber(number)) {
-											String name = matcher.group();
-											Integer num = NumberUtils.toInt(number);
-											List<Integer> idList = idsByName.getOrDefault(name, new ArrayList<>());
-											idList.add(num);
-											idsByName.put(name, idList);
-										}
-									}
+									String name = HangeulUtils.removeNonHangeul(h4Text);
+									Integer num = NumberUtils.toInt(StringUtils.trim(StringUtils.substring(link, LINK_PREFIX.length())));
+									List<Integer> idList = idsByName.getOrDefault(name, new ArrayList<>());
+									idList.add(num);
+									idsByName.put(name, idList);
 								});
 							})
 					);
