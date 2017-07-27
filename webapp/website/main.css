@@ -1,0 +1,10 @@
+.congressman{
+  float: left;
+  width: 25%;
+  background-color: #b8efc1;
+}
+
+div#hexagon{
+  float: left;
+  width: 50%;
+}
