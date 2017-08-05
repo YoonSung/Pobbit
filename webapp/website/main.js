@@ -1,18 +1,21 @@
 var canvasSize = 0;
 var sideWidth = 0;
 
+// 숫자들 정리를 하고 싶다...
 var hexRadius = 0;
 var hexYPoint = 0;
 var hexYPointHalf = 0;
 var hexXPoint = 0;
-var app;
 
-var graphColor = '333333';
-var sideBackColor = '333333';
-var koreaParty = 0;
-var liberalParty = 0;
-var uprightParty = 0;
-var nationParty = '048300';
+let pointArray = new Array();
+
+// 그래프 영역 총괄
+// todo: const와 let을 써야 한다는 정보 es5 이후
+let mainPIXIApp;
+
+const baseColor = '333333';
+const leftColor = 'bda1f4';
+const rightColor = 'fbd9a6';
 
 window.addEventListener("load", loadServerData, false);
 window.addEventListener("resize", refresh);
@@ -28,16 +31,17 @@ function start()
   initData();
 
   // draw PIXI
-  app = new PIXI.Application(canvasSize, canvasSize, {backgroundColor : graphColor},{antialias:true});
+  mainPIXIApp = new PIXI.Application(canvasSize, canvasSize, {backgroundColor : baseColor},{antialias:true});
 
   // base hexagon drawing
-  $("#hexagon").append(app.view);
+  $("#hexagon").append(mainPIXIApp.view);
   drawStat(true);
 
   // todo: insert selection logic
   drawSample();
+
   makeCongressManInfo();
-  makeCongressManInfo('이언주', 'right', nationParty);
+  makeCongressManInfo('이언주', 'right');
 }
 
 function refresh()
@@ -73,7 +77,7 @@ function initServerDatas()
   // 이 또한 캐싱 전략으로 가는게 좋겠다.
 }
 
-function drawStat(isBase = false, lineColor = 0xababab,
+function drawStat(isBase = false, lineColor = 'ababab',
                    factor1 = 1,
                    factor2 = 1,
                    factor3 = 1,
@@ -81,52 +85,100 @@ function drawStat(isBase = false, lineColor = 0xababab,
                    factor5 = 1,
                    factor6 = 1)
 {
-  var graph = new PIXI.Graphics();
+  let graph = new PIXI.Graphics();
   graph.interactive = false;
   graph.buttonMode = false;
 
+  lineColor = '0x'+lineColor;
   graph.lineStyle(2, lineColor, 1);
-  graph.drawPolygon([
-        0, hexYPoint * factor4,
-        hexXPoint * factor3, hexYPointHalf * factor3,
-        hexXPoint * factor2, -hexYPointHalf * factor2,
-        0, -hexYPoint * factor1,
-        -hexXPoint * factor6, -hexYPointHalf * factor6,
-        -hexXPoint * factor5, hexYPointHalf * factor5,
-      ]);
 
+  // 아 너무 구리지만 일단...
+  // 사실 base 만들 때만 쓰긴 하는데...
+  pointArray[0] = {x:0, y:-hexYPoint * factor1};
+  pointArray[1] = {x:hexXPoint * factor2, y:-hexYPointHalf * factor2};
+  pointArray[2] = {x:hexXPoint * factor3, y:hexYPointHalf * factor3};
+  pointArray[3] = {x:0, y:hexYPoint * factor4};
+  pointArray[4] = {x:-hexXPoint * factor5, y:hexYPointHalf * factor5};
+  pointArray[5] = {x:-hexXPoint * factor6, y:-hexYPointHalf * factor6};
+
+  graph.drawPolygon([
+    pointArray[0].x, pointArray[0].y,
+    pointArray[1].x, pointArray[1].y,
+    pointArray[2].x, pointArray[2].y,
+    pointArray[3].x, pointArray[3].y,
+    pointArray[4].x, pointArray[4].y,
+    pointArray[5].x, pointArray[5].y
+  ]);
+
+  //graph.drawPolygon([
+  //      0, -hexYPoint * factor1,  //12
+  //      hexXPoint * factor2, -hexYPointHalf * factor2,  //2
+  //      hexXPoint * factor3, hexYPointHalf * factor3, //4
+  //      0, hexYPoint * factor4, //6
+  //      -hexXPoint * factor5, hexYPointHalf * factor5,  //8
+  //      -hexXPoint * factor6, -hexYPointHalf * factor6, //10
+  //]);
+
+  // make base layer
   if (isBase)
   {
     graph.lineStyle(1, lineColor, 0.2).moveTo(0, hexYPoint).lineTo(0, -hexYPoint);
     graph.lineStyle(1, lineColor, 0.2).moveTo(hexXPoint, hexYPointHalf).lineTo(-hexXPoint, -hexYPointHalf);
     graph.lineStyle(1, lineColor, 0.2).moveTo(hexXPoint, -hexYPointHalf).lineTo(-hexXPoint, hexYPointHalf);
+
+    // 6방향 이름
+    makeClassifyNamePlate();
   }
 
   graph.endFill();
 
+  // move graph to center
   graph.x = canvasSize /2;
   graph.y = canvasSize /2;
 
-  app.stage.addChild(graph);
+  mainPIXIApp.stage.addChild(graph);
 }
 
+// 컨테이너에 담아서 처리는 하는 것이 좋을 것 같음
+function makeClassifyNamePlate()
+{
+  // container를 만들어
+
+  // 6개의 포인트를 배치하고
+
+  ////////////////////////////////////////////////
+  // sample code
+  //var attendant = new PIXI.Text('출석률', { font: '16px Snippet', fill: 'white', align: 'center' });
+  // 중점을 기준으로 움직이게 만듦
+  //attendant.anchor.set(0.5, 0.5);
+  //attendant.x = 0;
+  //attendant.y = 0;
+  //mainPIXIApp.stage.addChild(attendant);
+}
+
+
 var photoMap = new Map();
-function makeCongressManInfo(name="김무성", side="left", inColor='048300')
+function makeCongressManInfo(name="김무성", side="left")
 {
 
   //console.log(photoMap.get(name));
-  $("#"+side+"photo").css('background','#'+sideBackColor);
+  $("#"+side+"photo").css('background','#'+baseColor);
   $("#"+side+"photo").css('height',sideWidth * 1.35);
   $("#"+side+"photo").css('text-align','center');
   $("#"+side+"photo").css('padding-top',(sideWidth * 1.35 - sideWidth * 1.25)/2);
 
   $("#"+side+"photo").html('<img src="' + photoMap.get(name) + '" width="' + sideWidth * 0.9 + '" height="' + sideWidth * 1.25 +'" align="middle" />');
 
-  // 당 색상을 넣어준다
-  $("#"+side+"color").css('background','#'+inColor);
+  // left right만 구분지어서 하기로 했음
+  if (side == "left") {
+    $("#"+side+"color").css('background','#'+leftColor);
+  }
+  else {
+    $("#"+side+"color").css('background','#'+rightColor);
+  }
+
   //$("#"+side+"color").css('max-height', 15);
   $("#"+side+"color").css('height', 15);
-
 }
 
 
@@ -139,8 +191,8 @@ var someSenator = [80, 40, 30, 10, 90, 10];
 
 function drawSample()
 {
-  drawStat(false, 0xf7c785, someSenator[0]/fullCharged[0], 0.8, 0.7, 0.6, 0.9, 0.7);
-  drawStat(false, 0x32cc5b, 0.7, 0.8, 0.9, 0.7, 0.3, 0.6);
+  drawStat(false, leftColor, someSenator[0]/fullCharged[0], 0.8, 0.7, 0.6, 0.9, 0.7);
+  drawStat(false, rightColor, 0.7, 0.8, 0.9, 0.7, 0.3, 0.6);
 }
 
 photoMap.set("김무성", "http://cdn.mirror.wiki/http://info.nec.go.kr/photo_20160413/Sd2600/Gsg2604/Sgg2260401/Hb100120095/gicho/100120095.JPG")
