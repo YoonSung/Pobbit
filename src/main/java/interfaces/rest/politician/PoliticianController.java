@@ -41,6 +41,7 @@ public class PoliticianController extends InitAllPoliticianJobSubscriber impleme
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		initAllPoliticianJobExecutor.subscribe(this);
 		init(politicianRepository.findAll());
 	}
 }
