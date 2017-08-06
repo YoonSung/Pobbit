@@ -11,6 +11,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,8 @@ import org.jsoup.select.Elements;
 import client.CommonHttpClient;
 import domain.generic.Money;
 import domain.generic.Percent;
+import domain.politician.DeclaredProperty;
+import domain.politician.PoliticalContribution;
 import support.HangeulUtils;
 import support.JsoupUtils;
 
@@ -42,20 +46,23 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 		this.nameById = Collections.unmodifiableMap(nameById);
 	}
 
-	final Map<Integer, OpenCongressPoliticianPage> getAllPoliticianPage() {
-		final Map<Integer, OpenCongressPoliticianPage> pageById = new HashMap<>();
+	public final Map<Integer, PoliticianDetailPage> getAllPoliticianPage() {
+		final Map<Integer, PoliticianDetailPage> pageById = new HashMap<>();
 		idsByNameAll.forEach((name, ids) -> ids.forEach(id -> {
 			pageById.put(id, getPoliticianDetailPage(id));
 		}));
 		return Collections.unmodifiableMap(pageById);
 	}
 
-	OpenCongressPoliticianPage getPoliticianDetailPage(int id) {
-		final OpenCongressPoliticianPage page = new OpenCongressPoliticianPage();
+	PoliticianDetailPage getPoliticianDetailPage(int id) {
+		final PoliticianDetailPage page = new PoliticianDetailPage();
 		page.id = id;
 		page.url = String.format("%s/%s%d", HOST, LINK_PREFIX, id); 
 		page.koreanName = nameById.get(id);
 		Document document = fetchHtml(id);
+		JsoupUtils.firstElementByClassName(document, "m_pic")
+				.ifPresent(element -> page.imageUrl = element.attr("src"));
+		
 		JsoupUtils.firstElementByClassName(document, "table-user-information")
 				.flatMap(element -> JsoupUtils.firstElementByTagName(element, "tbody"))
 				.ifPresent(element -> element.children().forEach(trElement -> {
@@ -85,7 +92,7 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 							});
 					
 					findTdValueHtmlString("학력", trElement)
-							.ifPresent(value -> page.arcademyHistory = splitBy(value, "<br>"));
+							.ifPresent(value -> page.academyHistory = splitBy(value, "<br>"));
 
 					findTdValueHtmlString("주요경력", trElement)
 							.ifPresent(value -> page.majorCareers = splitBy(value, "<br>"));
@@ -115,7 +122,7 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 		JsoupUtils.firstElementByClassName(document.getElementById("collapse2"), "panel-body")
 				.map(panelElement -> panelElement.getElementsByClass("iGraph"))
 				.ifPresent(graphElements -> {
-					List<StandingCommitteeAttendance> standingCommitteeAttendances = new ArrayList<>(page.standingCommittee.size());
+					List<StandingCommitteeAttendanceDTO> standingCommitteeAttendances = new ArrayList<>(page.standingCommittee.size());
 					graphElements.stream()
 							.filter(e -> StringUtils.equals(e.previousElementSibling().tagName(), "div"))
 							.forEach(graphElement -> {
@@ -125,13 +132,13 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 										                                  .orElseThrow(IllegalStateException::new).text());
 								
 								if (page.standingCommittee.contains(committeeName)) {
-									StandingCommitteeAttendance attendance = new StandingCommitteeAttendance();
-									attendance.committeeName = committeeName;
-									attendance.rate = percent;
+									StandingCommitteeAttendanceDTO attendance = new StandingCommitteeAttendanceDTO();
+									attendance.setCommittee(committeeName);
+									attendance.setRate(percent);
 									standingCommitteeAttendances.add(attendance);
 								}
 							});
-					page.standingCommitteeAttendanceRate = standingCommitteeAttendances;
+					page.standingCommitteeAttendanceRates = standingCommitteeAttendances;
 				});
 		
 		// 본회의 활동
@@ -153,7 +160,7 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 						if (spanTags.size() != 3) {
 							throw new IllegalStateException();
 						}
-						page.totalVoteTurnOutInDistriction = stringToPercent(spanTags.get(0).text());
+						page.totalVoteTurnOutInDistrict = stringToPercent(spanTags.get(0).text());
 						page.electionVoteTurnOut = stringToPercent(spanTags.get(2).text());
 					});
 		}
@@ -169,7 +176,7 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 					
 					IntStream.range(1, thElements.size()).forEach(index -> {
 						DeclaredProperty property = new DeclaredProperty();
-						property.year = Integer.parseInt(thElements.get(index).text());
+						property.setYear(Integer.parseInt(thElements.get(index).text()));
 						properties.add(property);
 					});
 					Elements tdElements = JsoupUtils.firstElementByClassName(tableElement, "info")
@@ -179,7 +186,7 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 
 					IntStream.range(1, tdElements.size()).forEach(index -> {
 						DeclaredProperty property = properties.get(index -1);
-						property.total = stringToMoney(tdElements.get(index).text());
+						property.setTotal(stringToMoney(tdElements.get(index).text()));
 					});
 					
 					page.declaredPropertyHistory = properties;
@@ -224,9 +231,9 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 
 			PoliticalContribution contribution = new PoliticalContribution();
 			Money highAmount = moneyExtractor.apply(content, "고액");
-			contribution.highAmount = highAmount;
+			contribution.setHighAmount(highAmount);
 			if (highAmount != null) {
-				contribution.smallAmount = moneyExtractor.apply(content.substring(content.indexOf("y: ") + "y: ".length()), "소액");;
+				contribution.setSmallAmount(moneyExtractor.apply(content.substring(content.indexOf("y: ") + "y: ".length()), "소액"));
 			}
 			page.politicalContribution = contribution;
 		}
@@ -276,46 +283,36 @@ public abstract class OpenCongressClient extends CommonHttpClient {
 
 	abstract Map<String, List<Integer>> initializeIdListByName();
 
+	@Getter
 	@ToString
-	static class OpenCongressPoliticianPage {
+	public static class PoliticianDetailPage {
 		int id; // 아이디
 		String url;
+		String imageUrl;
 		String koreanName;  // 한국어 이름
 		String party;   // 소속정당
 		int numberOfElection;   // 당선횟수
 		List<Integer> electionTurns;  // 당선회차
 		List<String> standingCommittee; // 소속 상임위
-		List<String> arcademyHistory;   // 학력
+		List<String> academyHistory;   // 학력
 		List<String> majorCareers;  // 주요경력
 		String contact; // 연락처
 		String email;   // 연락처
 		int representativeBillProposalCount;    // 대표발의 법안 갯수
-		List<StandingCommitteeAttendance> standingCommitteeAttendanceRate;  //상임위 출석률
+		List<StandingCommitteeAttendanceDTO> standingCommitteeAttendanceRates;  //상임위 출석률
 		Percent plenaryMeetingAttendanceRate;   // 본회의 출석률
 		String districtOfElection; // 선거구
-		Percent totalVoteTurnOutInDistriction;   // 선거구 총 투표율
+		Percent totalVoteTurnOutInDistrict;   // 선거구 총 투표율
 		Percent electionVoteTurnOut;    // 당선 투표율
 		boolean proportionalRepresentation; // 비례대표 유무
 		List<DeclaredProperty> declaredPropertyHistory; // 연도별 신고재산
 		PoliticalContribution politicalContribution;    // 후원금
 	}
-
-	// TODO 상세한 건물 등의 데이터도 필요하면 바꿔야함. 현재는 총합
-	@ToString
-	static class DeclaredProperty {
-		private int year;
-		private Money total;
-	}
-
-	@ToString
-	static class PoliticalContribution {
-		private Money highAmount;
-		private Money smallAmount;
-	}
 	
-	@ToString
-	static class StandingCommitteeAttendance {
-		String committeeName;
+	@Setter
+	@Getter
+	public static class StandingCommitteeAttendanceDTO {
+		String committee;
 		Percent rate;
 	}
 }

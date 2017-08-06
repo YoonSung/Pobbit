@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
 
-import client.opencongress.OpenCongressClient.OpenCongressPoliticianPage;
+import client.opencongress.OpenCongressClient.PoliticianDetailPage;
 
 public class LocalOpenCongressClientTest {
 
@@ -18,7 +18,7 @@ public class LocalOpenCongressClientTest {
 	@Test
 	public void detail() {
 		LocalOpenCongressClient dut = new LocalOpenCongressClient(HttpClientBuilder.create().build());
-		final Map<Integer, OpenCongressPoliticianPage> map = dut.getAllPoliticianPage();
+		final Map<Integer, PoliticianDetailPage> map = dut.getAllPoliticianPage();
 		map.forEach((integer, openCongressPoliticianPage) -> {
 			System.out.println(openCongressPoliticianPage.toString());
 		});
