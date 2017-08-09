@@ -8,7 +8,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import client.opendata.LocalOpenDataClient;
 import client.opendata.OpenDataClient.BasicInfoIndex;
 
 public class LocalOpenDataClientTest {
@@ -25,6 +24,6 @@ public class LocalOpenDataClientTest {
 	public void test() {
 		List<BasicInfoIndex> list = dut.getAllPolitician();
 		assertThat(list.size()).isEqualTo(299);
-		//dut.getAllPolitician().stream().forEach(System.out::println);
+//		dut.getAllPolitician().stream().forEach(System.out::println);
 	}
 }

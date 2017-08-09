@@ -34,4 +34,8 @@ public class Percent {
 	private int intValue() {
 		return value.intValue();
 	}
+
+	public BigDecimal value() {
+		return value;
+	}
 }
