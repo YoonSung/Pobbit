@@ -142,25 +142,59 @@ function drawStat(isBase = false, lineColor = 'ababab',
 // 컨테이너에 담아서 처리는 하는 것이 좋을 것 같음
 function makeClassifyNamePlate()
 {
-  // container를 만들어
+  // container를 만들어, 중점 중앙으로 이동하고 main app에 붙임
+  var letterContainer = new PIXI.Container();
+  letterContainer.x = canvasSize/2;
+  letterContainer.y = canvasSize/2;
+  mainPIXIApp.stage.addChild(letterContainer);
 
-  // 6개의 포인트를 배치하고
+  // 6개의 포인트를 배치
+  var addPointRatio = 0;
+  for (var i in pointArray)
+  {
+    var addPointRatio = 0;
+    var textObject = new PIXI.Text('', { font: '16px Snippet', fill: 'white', align: 'center' });
 
-  ////////////////////////////////////////////////
-  // sample code
-  //var attendant = new PIXI.Text('출석률', { font: '16px Snippet', fill: 'white', align: 'center' });
-  // 중점을 기준으로 움직이게 만듦
-  //attendant.anchor.set(0.5, 0.5);
-  //attendant.x = 0;
-  //attendant.y = 0;
-  //mainPIXIApp.stage.addChild(attendant);
+    switch (i) {
+      case '0':
+        textObject.setText('출석률');
+        addPointRatio = 1.1;
+        break;
+      case '1':
+        textObject.setText('경력');
+        addPointRatio = 1.2;
+        break;
+      case '2':
+        textObject.setText('법안발의');
+        addPointRatio = 1.2;
+        break;
+      case '3':
+        textObject.setText('준법정신');
+        addPointRatio = 1.1;
+        break;
+      case '4':
+        textObject.setText('공개재산');
+        addPointRatio = 1.2;
+        break;
+      case '5':
+        textObject.setText('후원금');
+        addPointRatio = 1.2;
+        break;
+      default:
+        break;
+    }
+
+    textObject.anchor.set(0.5, 0.5);
+    textObject.x = pointArray[i].x * addPointRatio;
+    textObject.y = pointArray[i].y * addPointRatio;
+    letterContainer.addChild(textObject);
+  }
 }
 
 
 var photoMap = new Map();
 function makeCongressManInfo(name="김무성", side="left")
 {
-
   //console.log(photoMap.get(name));
   $("#"+side+"photo").css('background','#'+baseColor);
   $("#"+side+"photo").css('height',sideWidth * 1.35);
