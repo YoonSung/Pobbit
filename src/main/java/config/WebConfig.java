@@ -37,7 +37,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/assets/**").addResourceLocations("/assets/");
+		registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/");
 	}
 
 	@Bean
@@ -53,8 +53,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	public FreeMarkerConfigurer freemarkerConfig() throws Exception {
 		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
 		freeMarkerConfigurer.setDefaultEncoding(CharEncoding.UTF_8);
-		freeMarkerConfigurer.setTemplateLoaderPaths("classpath:freemarker");
-
+		freeMarkerConfigurer.setTemplateLoaderPaths("classpath:/website");
+		
 		freemarker.template.Configuration configuration = freeMarkerConfigurer.createConfiguration();
 		TemplateLoader[] loaders = new TemplateLoader[] {
 				configuration.getTemplateLoader()
