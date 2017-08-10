@@ -1,5 +1,6 @@
 package domain.politician;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Embeddable;
@@ -10,6 +11,8 @@ import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 @Getter
 @Setter
@@ -25,5 +28,12 @@ public class BasicInfo {
 	private String academyHistory;
 	private String careers;
 	@OneToMany
-	private List<StandingCommittee> standingCommittees;
+	private List<StandingCommittee> standingCommittees = new ArrayList<>();
+
+	public void setStandingCommittees(List<StandingCommittee> standingCommittees) {
+		if (CollectionUtils.isNotEmpty(standingCommittees)) {
+			this.standingCommittees.clear();
+			this.standingCommittees.addAll(standingCommittees);
+		}
+	}
 }

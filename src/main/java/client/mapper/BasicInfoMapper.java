@@ -12,12 +12,13 @@ import org.springframework.stereotype.Component;
 import client.opencongress.OpenCongressClient.PoliticianDetailPage;
 import domain.politician.BasicInfo;
 import domain.politician.Party;
-import domain.politician.StandingCommitteeRepository;
+import service.CommitteeService;
 
 @RequiredArgsConstructor
 @Component
 public class BasicInfoMapper implements EntityMapper<PoliticianDetailPage, BasicInfo>{
-	private final StandingCommitteeRepository standingCommitteeRepository;
+	private final CommitteeService committeeService;
+
 	@Override
 	public BasicInfo create(PoliticianDetailPage view) {
 
@@ -27,18 +28,12 @@ public class BasicInfoMapper implements EntityMapper<PoliticianDetailPage, Basic
 		entity.setContact(view.getContact());
 		entity.setEmail(view.getEmail());
 		entity.setImageUrl(view.getImageUrl());
-		
+		Optional.ofNullable(view.getStandingCommittee())
+				.filter(CollectionUtils::isNotEmpty)
+				.ifPresent(names -> entity.setStandingCommittees(committeeService.find(names)));
+				
 		entity.setAcademyHistory(listToString(view.getAcademyHistory()));
 		entity.setCareers(listToString(view.getMajorCareers()));
-		
-		//TODO ing
-//		Optional.ofNullable(view2.getStandingCommitteeAttendanceRates())
-//		List<StandingCommittee> standingCommitteeList = standingCommitteeRepository.findAllByName();
-//		entity.setStandingCommittees(Optional.ofNullable(view.getStandingCommitteeAttendanceRates())
-//				                             .filter(CollectionUtils::isNotEmpty)
-//				                             .map(StandingCommitteeAttendances::new)
-//				                             .orElse(null)
-//		);
 		
 		return entity;
 	}

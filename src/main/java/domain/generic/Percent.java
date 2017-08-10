@@ -38,4 +38,8 @@ public class Percent {
 	public BigDecimal value() {
 		return value;
 	}
+
+	public double doubleValue() {
+		return value.doubleValue();
+	}
 }
