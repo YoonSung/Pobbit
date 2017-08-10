@@ -7,15 +7,15 @@ var hexYPoint = 0;
 var hexYPointHalf = 0;
 var hexXPoint = 0;
 
-let pointArray = new Array();
+var pointArray = new Array();
 
 // 그래프 영역 총괄
 // todo: const와 let을 써야 한다는 정보 es5 이후
-let mainPIXIApp;
+var mainPIXIApp;
 
-const baseColor = '333333';
-const leftColor = 'bda1f4';
-const rightColor = 'fbd9a6';
+var baseColor = '333333';
+var leftColor = 'bda1f4';
+var rightColor = 'fbd9a6';
 
 window.addEventListener("load", loadServerData, false);
 window.addEventListener("resize", refresh);
@@ -37,8 +37,20 @@ function start()
   $("#hexagon").append(mainPIXIApp.view);
   drawStat(true);
 
-  // todo: insert selection logic
   drawSample();
+
+  //$('.list-group').css('max-height', $(window).height());
+  //console.log($('.list-group'));
+  $('.list-group').each(function(index, value) {
+    //console.log(index, value);
+    value.style.maxHeight = $(window).height() * 0.5;
+  });
+
+  // side menu drawing
+  $.each(congressName, function(index, value) {
+    $('#leftList .list-group').append('<a href="#" class="list-group-item">'+ value +'</a>');
+    $('#rightList .list-group').append('<a href="#" class="list-group-item">'+ value +'</a>');
+  });
 
   makeCongressManInfo();
   makeCongressManInfo('이언주', 'right');
@@ -110,15 +122,6 @@ function drawStat(isBase = false, lineColor = 'ababab',
     pointArray[5].x, pointArray[5].y
   ]);
 
-  //graph.drawPolygon([
-  //      0, -hexYPoint * factor1,  //12
-  //      hexXPoint * factor2, -hexYPointHalf * factor2,  //2
-  //      hexXPoint * factor3, hexYPointHalf * factor3, //4
-  //      0, hexYPoint * factor4, //6
-  //      -hexXPoint * factor5, hexYPointHalf * factor5,  //8
-  //      -hexXPoint * factor6, -hexYPointHalf * factor6, //10
-  //]);
-
   // make base layer
   if (isBase)
   {
@@ -139,7 +142,6 @@ function drawStat(isBase = false, lineColor = 'ababab',
   mainPIXIApp.stage.addChild(graph);
 }
 
-// 컨테이너에 담아서 처리는 하는 것이 좋을 것 같음
 function makeClassifyNamePlate()
 {
   // container를 만들어, 중점 중앙으로 이동하고 main app에 붙임
@@ -192,6 +194,7 @@ function makeClassifyNamePlate()
 }
 
 
+
 var photoMap = new Map();
 function makeCongressManInfo(name="김무성", side="left")
 {
@@ -215,9 +218,6 @@ function makeCongressManInfo(name="김무성", side="left")
   $("#"+side+"color").css('height', 15);
 }
 
-
-
-
 ///////////////////////////////////////////////////
 // sample datas
 var fullCharged = [100,100,100,100,100,100];
@@ -228,6 +228,8 @@ function drawSample()
   drawStat(false, leftColor, someSenator[0]/fullCharged[0], 0.8, 0.7, 0.6, 0.9, 0.7);
   drawStat(false, rightColor, 0.7, 0.8, 0.9, 0.7, 0.3, 0.6);
 }
+
+var congressName = ['강병원', '강창일', '강훈식', '고용진', '권미혁', '권칠승', '금태섭', '기동민', '김경수', '김경협', '김두관', '김민기', '김병관'];
 
 photoMap.set("김무성", "http://cdn.mirror.wiki/http://info.nec.go.kr/photo_20160413/Sd2600/Gsg2604/Sgg2260401/Hb100120095/gicho/100120095.JPG")
 photoMap.set("이언주", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-NCMDZZx_l7vSfoYz9EE32-9XTCTyQ4MjctZhiegaFFBj1WeU")
