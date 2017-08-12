@@ -1,14 +1,18 @@
 body {
-    background-color: #333333;
+    background-color: #333333 !important;
 }
 
 .congressman{
   float: left;
   width: 25%;
-  background-color: #b8efc1;
+  background-color: #333333;
 }
 
-div#hexagon{
+div#mainContents{
   float: left;
   width: 50%;
+}
+div#congressInfo{
+  width: 50%;
+  background-color: #ffffff;
 }
