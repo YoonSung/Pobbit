@@ -17,21 +17,21 @@ import domain.politician.StandingCommitteeRepository;
 @Service
 public class CommitteeService {
 	private final StandingCommitteeRepository standingCommitteeRepository;
-	
+
+	@Transactional
 	public StandingCommittee getOrCreatedCommittee(String committeeName) {
 		if (StringUtils.isBlank(committeeName)) {
 			throw new UnsupportedOperationException("committeeName must be exist");
 		}
 		committeeName = StringUtils.trim(committeeName);
-		Optional<StandingCommittee> committeeOptional = standingCommitteeRepository.findByName(committeeName);
+		Optional<StandingCommittee> committeeOptional = standingCommitteeRepository.findByName(committeeName);  
 		if (!committeeOptional.isPresent()) {
 			return standingCommitteeRepository.save(new StandingCommittee(committeeName));
 		} else {
 			return committeeOptional.get();
 		}
 	}
-
-	@Transactional
+	
 	public List<StandingCommittee> find(List<String> names) {
 		//TODO 성능
 		return names.stream().map(this::getOrCreatedCommittee).collect(Collectors.toList());

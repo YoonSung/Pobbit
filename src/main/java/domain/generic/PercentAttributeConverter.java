@@ -9,7 +9,7 @@ import javax.persistence.Converter;
 public class PercentAttributeConverter implements AttributeConverter<Percent, BigDecimal> {
 	@Override
 	public BigDecimal convertToDatabaseColumn(Percent percent) {
-		return percent.value();
+		return percent == null ? null : percent.value();
 	}
 
 	@Override

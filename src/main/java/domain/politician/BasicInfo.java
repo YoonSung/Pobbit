@@ -1,12 +1,13 @@
 package domain.politician;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,8 @@ public class BasicInfo {
 	private String imageUrl;
 	private String academyHistory;
 	private String careers;
-	@OneToMany
-	private List<StandingCommittee> standingCommittees = new ArrayList<>();
+	@ManyToMany(targetEntity = StandingCommittee.class)
+	private Set<StandingCommittee> standingCommittees = new HashSet<>();
 
 	public void setStandingCommittees(List<StandingCommittee> standingCommittees) {
 		if (CollectionUtils.isNotEmpty(standingCommittees)) {

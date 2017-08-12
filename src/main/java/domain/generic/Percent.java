@@ -2,9 +2,15 @@ package domain.generic;
 
 import java.math.BigDecimal;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString
+@NoArgsConstructor
+@Getter
+@Setter
 public class Percent {
 	private BigDecimal value;
 	

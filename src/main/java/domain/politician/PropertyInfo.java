@@ -1,8 +1,7 @@
 package domain.politician;
 
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.Embedded;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,6 @@ import lombok.Setter;
 @Embeddable
 public class PropertyInfo {
 	private DeclaredProperties declaredProperties;
-	@OneToOne(targetEntity = PoliticalContribution.class)
-	@JoinColumn(name = "contribution_id")
+	@Embedded
 	private PoliticalContribution politicalContribution;
 }
