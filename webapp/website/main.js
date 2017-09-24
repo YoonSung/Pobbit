@@ -12,6 +12,7 @@ var pointArray = new Array();
 // 그래프 영역 총괄
 // todo: const와 let을 써야 한다는 정보 es5 이후
 var mainPIXIApp;
+var starterOnlyFlag = true;
 
 
 ///////////////////////////////////////////////////
@@ -51,7 +52,8 @@ function start()
   // list view 만드는 함수
   $('.list-group').each(function(index, value) {
     //console.log(index, value);
-    value.style.maxHeight = $(window).height() * 0.5;
+    // todo: 전체 크기에서 사진 높이와 컬러 상자를 뺀 나머지를 넣도록 해 스크롤바가 이중으로 안 생기도록 하자
+    value.style.maxHeight = $(window).height() * 0.6;
   });
 
   // side menu drawing
@@ -63,9 +65,16 @@ function start()
   // todo : 국회의원 사진 넣는 함수인데, 여기가 아니라 리스트 선택 함수로 옮겨져야 합니다.
   makeCongressManInfo();
   makeCongressManInfo('이언주', 'right');
+  // table row 수정 함수도 만들고 옮겨져야 함
+  
 
-  // todo : 테이블 구성 함수인데, 여기가 아니라 리스트 선택 함수로 옮겨져야 합니다.
-  AddTableRow();
+  // 최초 1회만 수행되어야 함
+  if (starterOnlyFlag)
+  {
+    AddTableRow();
+    starterOnlyFlag = false;
+  }
+  
 }
 
 function refresh()
@@ -79,7 +88,6 @@ function initData()
 {
   // 조금 작게 그려서 center를 맞추도록 함(화면 표시 이슈)
   canvasSize = document.getElementById('hexagon').clientWidth;
-  canvasSize = canvasSize * 0.98;
 
   sideWidth = document.getElementsByClassName('congressman')[0].clientWidth;
 
@@ -227,6 +235,9 @@ function AddTableRow() {
   });
 }
 
+// table row를 수정하는 함수도 필요
+
+
 // click test function
 // todo : 정상적으로 만들어야지...
 $( document ).ready(function() {
@@ -245,7 +256,7 @@ function makeCongressManInfo(name="김무성", side="left")
   //$("#"+side+"photo").css('text-align','center');
   //$("#"+side+"photo").css('padding-top',(sideWidth * 1.35 - sideWidth * 1.25)/2);
 
-  $("#"+side+"photo").html('<img src="' + photoMap.get(name) + '" width="' + sideWidth * 0.98 + '" height="' + sideWidth * 1.1 +'" align="middle" />');
+  $("#"+side+"photo").html('<img src="' + photoMap.get(name) + '" width="' + sideWidth * 0.5 + '" height="' + sideWidth * 0.65 +'" align="middle" />');
 }
 
 
@@ -266,7 +277,7 @@ function drawSample()
     someSenator[4]/fullCharged[4], 
     someSenator[5]/fullCharged[5]
   );
-  drawStat(false, rightColor, 0.7, 0.8, 0.9, 0.7, 0.3, 0.6);
+  drawStat(false, rightColor, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5);
 }
 
 var congressName = ['김무성', '이언주', '강병원', '강창일', '강훈식', '고용진', '권미혁', '권칠승', '금태섭', '기동민', '김경수', '김경협', '김두관', '김민기', '김병관'];
