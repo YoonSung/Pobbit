@@ -13,9 +13,16 @@ var pointArray = new Array();
 // todo: const와 let을 써야 한다는 정보 es5 이후
 var mainPIXIApp;
 
+
+///////////////////////////////////////////////////
+// global static const data
+// Do Not Modify/Delete This!
+var tableRowName = ["출석률", "법안 발의 횟수", "준법 정신(전과 현황)", "공개 재산","후원금" ,"경력"];
 var baseColor = '333333';
 var leftColor = 'bda1f4';
 var rightColor = 'fbd9a6';
+///////////////////////////////////////////////////
+
 
 window.addEventListener("load", loadServerData, false);
 window.addEventListener("resize", refresh);
@@ -37,6 +44,8 @@ function start()
   $("#hexagon").append(mainPIXIApp.view);
   drawStat(true);
 
+  // todo : 삭제 해야 합니다!
+  // 샘플 그래프 그리는 함수
   drawSample();
 
   //$('.list-group').css('max-height', $(window).height());
@@ -52,8 +61,12 @@ function start()
     $('#rightList .list-group').append('<a href="#" class="list-group-item">'+ value +'</a>');
   });
 
+  // todo : 국회의원 사진 넣는 함수인데, 여기가 아니라 리스트 선택 함수로 옮겨져야 합니다.
   makeCongressManInfo();
   makeCongressManInfo('이언주', 'right');
+
+  // todo : 테이블 구성 함수인데, 여기가 아니라 리스트 선택 함수로 옮겨져야 합니다.
+  AddTableRow();
 }
 
 function refresh()
@@ -70,7 +83,7 @@ function initData()
   sideWidth = document.getElementsByClassName('congressman')[0].clientWidth;
 //  console.log(sideWidth);
 
-  hexRadius = canvasSize/2.5;
+  hexRadius = canvasSize/4;
   hexYPoint = hexRadius;
   hexYPointHalf = hexYPoint / 2;
   hexXPoint = hexYPoint / 2 * Math.sqrt(3);
@@ -142,6 +155,8 @@ function drawStat(isBase = false, lineColor = 'ababab',
   mainPIXIApp.stage.addChild(graph);
 }
 
+// 한글로 나오는 항목 이름을 PIXI에 출력하는 함수
+// 한글 엣지부분이 흐릿한 이유는 아직 잘 모르겠음
 function makeClassifyNamePlate()
 {
   // container를 만들어, 중점 중앙으로 이동하고 main app에 붙임
@@ -155,32 +170,32 @@ function makeClassifyNamePlate()
   for (var i in pointArray)
   {
     var addPointRatio = 0;
-    var textObject = new PIXI.Text('', { font: '16px Snippet', fill: 'white', align: 'center' });
+    var textObject = new PIXI.Text('', { font: '16px', fill: 'white', align: 'center' });
 
     switch (i) {
       case '0':
-        textObject.setText('출석률');
-        addPointRatio = 1.1;
+        textObject.setText('출석');
+        addPointRatio = 1.2;
         break;
       case '1':
         textObject.setText('경력');
-        addPointRatio = 1.2;
+        addPointRatio = 1.3;
         break;
       case '2':
         textObject.setText('법안발의');
-        addPointRatio = 1.2;
+        addPointRatio = 1.3;
         break;
       case '3':
         textObject.setText('준법정신');
-        addPointRatio = 1.1;
+        addPointRatio = 1.2;
         break;
       case '4':
         textObject.setText('공개재산');
-        addPointRatio = 1.2;
+        addPointRatio = 1.3;
         break;
       case '5':
         textObject.setText('후원금');
-        addPointRatio = 1.2;
+        addPointRatio = 1.3;
         break;
       default:
         break;
@@ -194,17 +209,44 @@ function makeClassifyNamePlate()
 }
 
 
+function AddTableRow() {
+  // for (var i in tableRowName)
+  // {
+  //   var row = $("<tr><td>"+tableRowName[i]+"</td><td>"+1+"</td><td>"+2+"</td></tr>");
+  //   $('.table tbody').append(row);
+  // }
 
+  // 그래프에서는 비율을 넣어줘야 하는데, 여기에서는 original 값을 넣어줘야 함
+  // 그래프 계산식 = original 값 / 각 항목 맥스
+  // Table 계산식 = original 값
+  // todo : data structure 만들어 지면 읽어와서 넣을 것
+  $.each(tableRowName, function(index, value) {
+    var row = $("<tr><td>"+ value +"</td><td>"+ 1 +"</td><td>"+ 2 +"</td></tr>");
+    $('.table tbody').append(row);
+  });
+}
+
+// click test function
+// todo : 정상적으로 만들어야지...
+$( document ).ready(function() {
+  $('#leftList').on('click', function() {
+    console.log("1");
+  })
+});
+
+
+// 사진과 양쪽 base color를 넣는 함수입니다만
+// todo : color를 고정하기로 했기 때문에 color는 css에 박고 삭제할 필요가 있습니다.
 var photoMap = new Map();
 function makeCongressManInfo(name="김무성", side="left")
 {
   //console.log(photoMap.get(name));
   $("#"+side+"photo").css('background','#'+baseColor);
-  $("#"+side+"photo").css('height',sideWidth * 1.35);
-  $("#"+side+"photo").css('text-align','center');
-  $("#"+side+"photo").css('padding-top',(sideWidth * 1.35 - sideWidth * 1.25)/2);
+  //$("#"+side+"photo").css('height',sideWidth * 1.35);
+  //$("#"+side+"photo").css('text-align','center');
+  //$("#"+side+"photo").css('padding-top',(sideWidth * 1.35 - sideWidth * 1.25)/2);
 
-  $("#"+side+"photo").html('<img src="' + photoMap.get(name) + '" width="' + sideWidth * 0.9 + '" height="' + sideWidth * 1.25 +'" align="middle" />');
+  $("#"+side+"photo").html('<img src="' + photoMap.get(name) + '" width="' + sideWidth + '" height="' + sideWidth * 1.1 +'" align="middle" />');
 
   // left right만 구분지어서 하기로 했음
   if (side == "left") {
@@ -218,18 +260,28 @@ function makeCongressManInfo(name="김무성", side="left")
   $("#"+side+"color").css('height', 15);
 }
 
+
+
 ///////////////////////////////////////////////////
 // sample datas
+// todo : delete and make real funtion
 var fullCharged = [100,100,100,100,100,100];
 var someSenator = [80, 40, 30, 10, 90, 10];
 
 function drawSample()
 {
-  drawStat(false, leftColor, someSenator[0]/fullCharged[0], 0.8, 0.7, 0.6, 0.9, 0.7);
+  drawStat(false, leftColor, 
+    someSenator[0]/fullCharged[0], 
+    someSenator[1]/fullCharged[1], 
+    someSenator[2]/fullCharged[2], 
+    someSenator[3]/fullCharged[3], 
+    someSenator[4]/fullCharged[4], 
+    someSenator[5]/fullCharged[5]
+  );
   drawStat(false, rightColor, 0.7, 0.8, 0.9, 0.7, 0.3, 0.6);
 }
 
-var congressName = ['강병원', '강창일', '강훈식', '고용진', '권미혁', '권칠승', '금태섭', '기동민', '김경수', '김경협', '김두관', '김민기', '김병관'];
+var congressName = ['김무성', '이언주', '강병원', '강창일', '강훈식', '고용진', '권미혁', '권칠승', '금태섭', '기동민', '김경수', '김경협', '김두관', '김민기', '김병관'];
 
 photoMap.set("김무성", "http://cdn.mirror.wiki/http://info.nec.go.kr/photo_20160413/Sd2600/Gsg2604/Sgg2260401/Hb100120095/gicho/100120095.JPG")
 photoMap.set("이언주", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-NCMDZZx_l7vSfoYz9EE32-9XTCTyQ4MjctZhiegaFFBj1WeU")
