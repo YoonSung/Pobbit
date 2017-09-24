@@ -14,7 +14,8 @@ public class PoliticianMapper implements EntityMapper<PoliticianDetailPage, Poli
 	private final ElectionInfoMapper electionInfoMapper;
 	private final ActivityMapper activityMapper;
 	private final PropertyInfoMapper propertyInfoMapper;
-	
+	private final CriminalInfoMapper criminalInfoMapper;
+
 	@Override
 	public Politician create(PoliticianDetailPage view) {
 		Politician entity = new Politician();
@@ -23,6 +24,7 @@ public class PoliticianMapper implements EntityMapper<PoliticianDetailPage, Poli
 		entity.setElectionInfo(electionInfoMapper.create(view));
 		entity.setActivity(activityMapper.create(view));
 		entity.setPropertyInfo(propertyInfoMapper.create(view));
+		entity.setCriminalInfo(criminalInfoMapper.create(entity, view));
 		
 		return entity;
 	}

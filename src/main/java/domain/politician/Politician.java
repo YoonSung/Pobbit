@@ -33,4 +33,7 @@ public class Politician {
 
 	@Embedded
 	private PropertyInfo propertyInfo;
+
+	@Embedded
+	private CriminalInfo criminalInfo;
 }

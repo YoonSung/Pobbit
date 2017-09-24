@@ -1,7 +1,9 @@
 package interfaces.rest.politician;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ public class PoliticianController extends InitAllPoliticianJobSubscriber impleme
 	private final PoliticianService politicianService;
 	private final PoliticianViewMapper viewMapper;
 	private final InitAllPoliticianJobExecutor initAllPoliticianJobExecutor;
-	private List<PoliticianView> views;
+	private Map<Integer, PoliticianView> viewById;
 
 	@PutMapping("reset")
 	public ResponseEntity reset() {
@@ -35,14 +37,16 @@ public class PoliticianController extends InitAllPoliticianJobSubscriber impleme
 	}
 
 	@GetMapping
-	public List<PoliticianView> list() {
-		return views;
+	public Map<Integer, PoliticianView> list() {
+		return viewById;
 	}
 
-	private void init(List<Politician> politicians) {
+	public void init(List<Politician> politicians) {
 		politicianService.deleteAll();
-		this.views = politicians.stream().map(viewMapper::entityToView).collect(Collectors.toList());
 		politicianService.save(politicians);
+		this.viewById = viewMapper.entitiesToViewList(politicians)
+				.stream()
+				.collect(Collectors.toMap(PoliticianView::getId, Function.identity()));
 	}
 
 	@Override
