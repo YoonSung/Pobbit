@@ -8,6 +8,16 @@ body {
   background-color: #333333;
 }
 
+div#leftcolor{
+  background-color: #bda1f4;
+  height: 15px;
+}
+
+div#rightcolor{
+  background-color: #fbd9a6;
+  height: 15px;
+}
+
 div#mainContents{
   float: left;
   width: 40%;

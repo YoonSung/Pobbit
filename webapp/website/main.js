@@ -48,8 +48,7 @@ function start()
   // 샘플 그래프 그리는 함수
   drawSample();
 
-  //$('.list-group').css('max-height', $(window).height());
-  //console.log($('.list-group'));
+  // list view 만드는 함수
   $('.list-group').each(function(index, value) {
     //console.log(index, value);
     value.style.maxHeight = $(window).height() * 0.5;
@@ -78,12 +77,13 @@ function refresh()
 // 그리기용 local data만 initialize 한다
 function initData()
 {
+  // 조금 작게 그려서 center를 맞추도록 함(화면 표시 이슈)
   canvasSize = document.getElementById('hexagon').clientWidth;
+  canvasSize = canvasSize * 0.98;
 
   sideWidth = document.getElementsByClassName('congressman')[0].clientWidth;
-//  console.log(sideWidth);
 
-  hexRadius = canvasSize/4;
+  hexRadius = canvasSize/2.8;
   hexYPoint = hexRadius;
   hexYPointHalf = hexYPoint / 2;
   hexXPoint = hexYPoint / 2 * Math.sqrt(3);
@@ -210,6 +210,7 @@ function makeClassifyNamePlate()
 
 
 function AddTableRow() {
+  // 이렇게도 할 수 있음
   // for (var i in tableRowName)
   // {
   //   var row = $("<tr><td>"+tableRowName[i]+"</td><td>"+1+"</td><td>"+2+"</td></tr>");
@@ -235,29 +236,16 @@ $( document ).ready(function() {
 });
 
 
-// 사진과 양쪽 base color를 넣는 함수입니다만
-// todo : color를 고정하기로 했기 때문에 color는 css에 박고 삭제할 필요가 있습니다.
+// 사진처리 함수
 var photoMap = new Map();
 function makeCongressManInfo(name="김무성", side="left")
 {
-  //console.log(photoMap.get(name));
   $("#"+side+"photo").css('background','#'+baseColor);
   //$("#"+side+"photo").css('height',sideWidth * 1.35);
   //$("#"+side+"photo").css('text-align','center');
   //$("#"+side+"photo").css('padding-top',(sideWidth * 1.35 - sideWidth * 1.25)/2);
 
-  $("#"+side+"photo").html('<img src="' + photoMap.get(name) + '" width="' + sideWidth + '" height="' + sideWidth * 1.1 +'" align="middle" />');
-
-  // left right만 구분지어서 하기로 했음
-  if (side == "left") {
-    $("#"+side+"color").css('background','#'+leftColor);
-  }
-  else {
-    $("#"+side+"color").css('background','#'+rightColor);
-  }
-
-  //$("#"+side+"color").css('max-height', 15);
-  $("#"+side+"color").css('height', 15);
+  $("#"+side+"photo").html('<img src="' + photoMap.get(name) + '" width="' + sideWidth * 0.98 + '" height="' + sideWidth * 1.1 +'" align="middle" />');
 }
 
 
